@@ -1,0 +1,31 @@
+{
+  "name": "signer",
+  "version": "1.0.0",
+  "author": "Allen Brubaker",
+  "license": "MIT",
+  "description": "Concurrent record signing in batches",
+  "main": "serverless.ts",
+  "scripts": {
+    "db:migrate": "yarn prisma migrate dev",
+    "db:client": "yarn prisma generate",
+    "db:seed": "yarn prisma db seed"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "prisma": {
+    "seed": "ts-node ./prisma/seed.ts"
+  },
+  "dependencies": {
+    "@kubernetes/client-node": "^0.18.1",
+    "@prisma/client": "4.14.0",
+    "crc-32": "^1.2.2"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.25",
+    "prisma": "^4.14.0",
+    "ts-node": "^10.4.0",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^4.1.3"
+  }
+}

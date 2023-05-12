@@ -1,2 +1,2 @@
-# workers
-Worker pollers that seamlessly rebalance workload based on worker and work cardinalities.
+# Description
+Worker poller services that seamlessly rebalance workload based on worker and task cardinalities with minimal collaboration and perturbations.
