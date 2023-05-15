@@ -8,7 +8,10 @@
   "scripts": {
     "db:migrate": "yarn prisma migrate dev",
     "db:client": "yarn prisma generate",
-    "db:seed": "yarn prisma db seed"
+    "db:seed": "yarn prisma db seed",
+    "start": "yarn db:migrate && yarn db:seed && ts-node src",
+    "deploy": "docker build -t workers:latest . && helm upgrade --install workers ./helm/workers",
+    "undeploy": "helm delete workers"
   },
   "engines": {
     "node": ">=18.0.0"

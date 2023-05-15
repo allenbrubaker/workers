@@ -1,6 +1,6 @@
 import { Task } from '@prisma/client';
 import { getAllTasks, getTaskCount, saveTasks } from './db';
-import { buildHashRing } from './hash-ring';
+import { buildHashRing, printHashRing } from './hash-ring';
 import { getMyPod, getPods as getPodsSorted } from './kube-client';
 
 type Counts = {
@@ -16,7 +16,7 @@ export const startWorker = async () => {
     const start = Date.now();
 
     if (myTasks.length) {
-      console.log(`Watching: ${myTasks.map(t => t.ID)}`);
+      console.log(`Watching ${myTasks.length} tasks: ${myTasks.map(x => x.ID).join(',\t')}`);
       myTasks = increment(myTasks, pod);
       await saveTasks(myTasks);
     }
@@ -24,6 +24,7 @@ export const startWorker = async () => {
     const newCounts = await getCounts();
     if (isModified(newCounts, counts)) {
       counts = newCounts;
+      console.log('Rebalancing due to tasks or worker mismatch.', { pod, ...counts });
       myTasks = await rebalance(counts.workers, pod);
     }
 
@@ -39,7 +40,10 @@ const rebalance = async (workers: string[], pod: string) => {
     workers,
     tasks.map(x => x.ID)
   );
-  return assignments[pod].sort().map(tid => taskMap[tid]);
+  printHashRing(assignments);
+  const myTasks = assignments[pod]?.sort().map(tid => taskMap[tid]) ?? [];
+  console.log(`Rebalanced Tasks: ${myTasks.length}`);
+  return myTasks;
 };
 
 const increment = (tasks: Task[], pod: string) =>
